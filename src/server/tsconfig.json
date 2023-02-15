@@ -1,7 +1,9 @@
 {
   "compilerOptions": {
     "baseUrl": "./",
-    "target": "ES2018",
+    "target": "ES2022",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
     "moduleResolution": "Node",
     "module": "commonjs",
     "skipLibCheck": true,
@@ -16,7 +18,6 @@
       ],
     },
   },
-  "experimentalDecorators": true,
   "exclude": [
     "node_modules"
   ]

@@ -27,5 +27,4 @@ export const onNetPromise = async <T>(
             }).catch(err => console.error(`An error occured for a onNetPromise (${eventName}), Error: ${err.message}`));
         }
     });
-
 }

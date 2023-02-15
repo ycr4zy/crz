@@ -2,12 +2,13 @@ import crypt from "lib/cryption/crypt";
 import generateUUID from "lib/generateUUID";
 
 interface IEmitNetPromise {
-    source?: string
+    source?: string;
+    type?: 'server' | 'client';
     eventName: string;
     args: any[];
 }
 
-export const emitNetPromise = <T>({ source, eventName, args }: IEmitNetPromise): Promise<T> => {
+export const emitNetPromise = <T>({ source, type = "client", eventName, args }: IEmitNetPromise): Promise<T> => {
     return new Promise(async (resolve, reject) => {
 
         const uniqId = await generateUUID();
@@ -40,9 +41,22 @@ export const emitNetPromise = <T>({ source, eventName, args }: IEmitNetPromise):
 
         onNet(listenEventName, handleListenEvent);
 
-        if (IsDuplicityVersion() && source)
-            emitNet(eventCrypted, source, listenEventName, ...args);
-        else
-            emitNet(eventCrypted, listenEventName, ...args);
+        if (IsDuplicityVersion() && source) {
+            if (type === "server") {
+                args.unshift("src:" + source)
+                emit(eventCrypted, listenEventName, ...args);
+            }
+            else {
+                args.unshift("client")
+                emitNet(eventCrypted, source, listenEventName, ...args);
+            }
+        }
+        else {
+            if (type === "client") {
+                emit(eventCrypted, listenEventName, ...args);
+            }
+            else
+                emitNet(eventCrypted, listenEventName, ...args);
+        }
     });
 }
