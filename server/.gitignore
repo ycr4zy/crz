@@ -1,0 +1,8 @@
+citizen/system_resources/
+components.json
+*.crt
+*.key
+*.cfg
+*.bat
+*.exe
+*.dll

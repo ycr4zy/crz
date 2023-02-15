@@ -1,5 +1,5 @@
 {
-  "name": "surge",
+  "name": "crz",
   "scripts": {
     "build": "node scripts/esbuild.config.js"
   },
