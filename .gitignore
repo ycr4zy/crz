@@ -1,0 +1,6 @@
+# Keep environment variables out of version control
+.env
+node_modules
+dist/
+server/
+*.lock

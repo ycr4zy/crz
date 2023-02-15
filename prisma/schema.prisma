@@ -1,0 +1,25 @@
+generator client {
+  provider   = "prisma-client-js"
+  engineType = "binary"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Users {
+  id            Int    @id @default(autoincrement())
+
+  license       String @unique
+
+  discordId     String @default("0")
+  
+  discordPoints String @default("0")
+
+  createdAt     DateTime @default(now())
+
+  updatedAt     DateTime @updatedAt
+
+  @@map("users")
+}
