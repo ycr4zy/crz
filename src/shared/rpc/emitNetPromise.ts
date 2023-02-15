@@ -1,4 +1,4 @@
-import encDec from "lib/cryption/encrypt";
+import crypt from "lib/cryption/crypt";
 import generateUUID from "lib/generateUUID";
 
 interface IEmitNetPromise {
@@ -12,9 +12,9 @@ export const emitNetPromise = <T>({ source, eventName, args }: IEmitNetPromise):
 
         const uniqId = await generateUUID();
 
-       // const encryptionName = JSON.stringify(await encDec("encrypt", eventName))
+        const eventCrypted = await crypt.encrypt(eventName);
 
-        const listenEventName = `${eventName}:${uniqId}`;
+        const listenEventName = `${eventCrypted}:${uniqId}`;
 
         const handleListenEvent = (data: T) => {
 
@@ -34,15 +34,15 @@ export const emitNetPromise = <T>({ source, eventName, args }: IEmitNetPromise):
 
             removeEventListener(listenEventName, handleListenEvent);
 
-            reject(`${eventName} has timed out after ${timeout} ms`);
+            reject(`${listenEventName} has timed out after ${timeout} ms`);
 
         }, timeout);
 
         onNet(listenEventName, handleListenEvent);
 
         if (IsDuplicityVersion() && source)
-            emitNet(eventName, source, listenEventName, ...args);
+            emitNet(eventCrypted, source, listenEventName, ...args);
         else
-            emitNet(eventName, listenEventName, ...args);
+            emitNet(eventCrypted, listenEventName, ...args);
     });
 }

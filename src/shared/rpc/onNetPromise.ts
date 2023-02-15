@@ -1,10 +1,11 @@
-import encDec from "lib/cryption/encrypt";
+import crypt from "lib/cryption/crypt";
 
 export const onNetPromise = async <T>(
     eventName: string,
     func: (source?: number, ...args: any[]) => Promise<T> | T
 ): Promise<void> => {
-    onNet(eventName, async (respEventName: string, ...args: any[]) => {
+    const eventNameCrypt = await crypt.encrypt(eventName);
+    onNet(eventNameCrypt, async (respEventName: string, ...args: any[]) => {
         if (!respEventName)
             console.warn(`Promise event (${eventName}) was called with wrong struct (maybe originator wasn't a promiseEvent`);
 
