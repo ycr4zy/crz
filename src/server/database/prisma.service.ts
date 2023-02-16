@@ -17,10 +17,10 @@ export class PrismaService {
     async connect(): Promise<void> {
         try {
             await this.client.$connect();
-            this.logger.log('[PrismaService] Successfully connected to database');
+            this.logger.log(this.constructor.name, 'Successfully connected to database');
         } catch (e) {
             if (e instanceof Error) {
-                this.logger.error('[PrismaService] Error to connected database: ' + e.message);
+                this.logger.error(this.constructor.name, 'Error to connected database: ' + e.message);
             }
         }
     }

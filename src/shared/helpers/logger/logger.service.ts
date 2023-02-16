@@ -16,14 +16,17 @@ export class LoggerService implements ILogger {
     }
 
     log(...args: unknown[]): void {
-        this.logger.info(...args);
+        const argsFormatted = "\x1b[33m[" + args[0] + "]\x1b[0m"
+        this.logger.info(argsFormatted, ...args.slice(1));
     }
 
     error(...args: unknown[]): void {
-        this.logger.error(...args);
+        const argsFormatted = "\x1b[33m[" + args[0] + "]\x1b[0m"
+        this.logger.error(argsFormatted, ...args.slice(1));
     }
 
     warn(...args: unknown[]): void {
-        this.logger.warn(...args);
+        const argsFormatted = "\x1b[33m[" + args[0] + "]\x1b[0m"
+        this.logger.warn(argsFormatted, ...args.slice(1));
     }
 }

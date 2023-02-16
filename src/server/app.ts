@@ -18,6 +18,6 @@ export class App {
     public async init(): Promise<void> {
         await this.prismaService.connect();
 
-        this.logger.log(`⚡️ Server is running`);
+        this.logger.log(this.constructor.name, `⚡️ Server is running`);
     }
 }
