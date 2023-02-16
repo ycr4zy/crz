@@ -1,39 +1,32 @@
-import "reflect-metadata";
-import { emitNetPromise } from '@shared/rpc';
-import { onNetEvent } from '@shared/decorator';
+import { Container, ContainerModule, interfaces } from 'inversify';
+// Imports for Service
+import { PrismaService } from './database/prisma.service';
+import { LoggerService } from '@shared/helpers/logger/logger.service';
 
-//onNetPromise<string>('callserver', (source, message) => {
-//
-//  const response: string = `Chamado por a seguinte mensagem: ${message}`
-//
-//  console.log(response)
-//
-//  return response;
-//
-//});
+// Imports for Interface
+import { ILogger } from '@shared/helpers/logger/logger.interface';
 
-RegisterCommand('server', async (source: string) => { //ok this is working
-
-  const result = await emitNetPromise<string>({ source: source, type: "client", eventName: 'callclient', args: ['AB','CD'] });
-  const result2 = await emitNetPromise<string>({ source: source, type: "server", eventName: 'callserver', args: ['EF', 'GH'] });
-
-  console.debug("server->client", result);
-
-  console.debug("server->server", result2);
-
-
-}, false);
-
-
-class ExampleClass {
-
-  @onNetEvent()
-  async callserver(source: string, message: string, test: string) {
-
-    const response: string = `${source} chamou a seguinte mensagem: ${message}, ${test}`
-
-    return response;
-  }
+// Imports for App
+import Types from './types';
+import { App } from 'app';
+export interface IBootstrapReturn {
+    appContainer: Container;
+    app: App;
 }
 
-new ExampleClass();
+export const appBindings = new ContainerModule((bind: interfaces.Bind) => {
+    bind<ILogger>(Types.ILogger).to(LoggerService).inSingletonScope();
+    bind<PrismaService>(Types.PrismaService).to(PrismaService).inSingletonScope();
+    bind<App>(Types.Application).to(App);
+});
+
+function bootstrap(): IBootstrapReturn {
+    const appContainer = new Container();
+    appContainer.load(appBindings);
+    const app = appContainer.get<App>(Types.Application);
+    app.init();
+
+    return { appContainer, app };
+}
+
+export const { app, appContainer } = bootstrap();

@@ -8,6 +8,7 @@
         "target": "ES2022",
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
+        "allowSyntheticDefaultImports": true,
         "allowJs": true,
         "lib": [
             "es2021"
