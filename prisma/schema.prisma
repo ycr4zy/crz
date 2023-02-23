@@ -9,17 +9,11 @@ datasource db {
 }
 
 model Users {
-  id            Int    @id @default(autoincrement())
-
-  license       String @unique
-
-  discordId     String @default("0")
-  
-  discordPoints String @default("0")
-
+  id            Int      @id @default(autoincrement())
+  discordId     String   @default("0")
+  discordPoints Int      @default(0)
   createdAt     DateTime @default(now())
-
-  updatedAt     DateTime @updatedAt
-
-  @@map("users")
+  updatedAt     DateTime
+  licenseId     String   @default("0")
+  steamId       String   @default("0")
 }
