@@ -53,13 +53,13 @@ function bootstrap(): IBootstrapReturn {
 
     modules.forEach((modules) => {
 
-        const controller = appContainer.get<any>(modules.types);
+        const binds = appContainer.get<any>(modules.types);
 
-        for (const methodName of getMethodNames(controller)) {
+        for (const methodName of getMethodNames(binds)) {
 
             const netEventsMetadata = getMethodMetadata<string[]>(
                 "__net_event__",
-                controller,
+                binds,
                 methodName
             );
 
@@ -68,9 +68,29 @@ function bootstrap(): IBootstrapReturn {
                 for (const eventName of netEventsMetadata) {
                     onNet(eventName, (...args: any[]) => {
 
-                        controller[methodName](...args);
+                        binds[methodName](...args);
 
                     });
+                }
+
+            }
+
+            const eventsMetadata = getMethodMetadata<string[]>(
+                "__event__",
+                binds,
+                methodName
+            );
+
+            if (eventsMetadata) {
+
+                for (const eventName of eventsMetadata) {
+
+                    on(eventName, (...args: any[]) => {
+
+                        binds[methodName](...args);
+
+                    });
+                    
                 }
 
             }

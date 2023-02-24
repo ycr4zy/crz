@@ -1,1 +1,1 @@
-export * from './onGameEvent';
+export * from './onEvent';

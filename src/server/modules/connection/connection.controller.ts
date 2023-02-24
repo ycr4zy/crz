@@ -1,12 +1,12 @@
 import { inject, injectable } from 'inversify';
 
-import { ILogger } from "@shared/helpers/logger/logger.interface";
-
 import Types from '../../types';
+//  Imports interfaces for the controller
+import { ILogger } from "@shared/helpers/logger/logger.interface";
 import { IConnectionController } from './connection.controller.interface';
 import { IConnectionService } from './connection.service.interface';
-
-import { onGameEvent } from '@shared/decorator'
+// Imports utils for the decorator
+import { onEvent } from '@shared/decorator'
 
 @injectable()
 export class ConnectionController implements IConnectionController {
@@ -20,7 +20,7 @@ export class ConnectionController implements IConnectionController {
 
     }
 
-    @onGameEvent("playerConnecting")
+    @onEvent("playerConnecting")
     async onPlayerConnecting(name: string, setKickReason: Function, deferrals: any) {
 
         deferrals.done("You are not allowed to join this server.")
