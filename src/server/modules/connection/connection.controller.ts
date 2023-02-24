@@ -18,9 +18,6 @@ export class ConnectionController implements IConnectionController {
 
     @onEvent("playerConnecting")
     async onPlayerConnecting(name: string, setKickReason: Function, deferrals: any) {
-
-        deferrals.done("You are not allowed to join this server.")
-
-        this.logger.log(this.constructor.name, `Player ${name} is connecting`);
+        return await this.connectionService.onPlayerConnecting(name, setKickReason, deferrals);
     }
 }
