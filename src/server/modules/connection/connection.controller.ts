@@ -16,8 +16,6 @@ export class ConnectionController implements IConnectionController {
         @inject(Types.ILogger) public logger: ILogger,
         @inject(Types.ConnectionService) public connectionService: IConnectionService,
     ) {
-        this.logger.log(this.constructor.name, "Initiated")
-
     }
 
     @onEvent("playerConnecting")

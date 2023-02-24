@@ -20,6 +20,8 @@ export interface IBootstrapReturn {
     app: App;
 }
 
+const logger = new LoggerService();
+
 const modules = [
     // Logger
     { types: Types.ILogger, className: LoggerService },
@@ -35,15 +37,23 @@ const modules = [
 
 export const appBindings = new ContainerModule((bind: interfaces.Bind) => {
 
-    modules.forEach((modules) => {
+    modules.forEach(async (modules) => {
 
-        bind(modules.types).to(modules.className).inSingletonScope();
+        var start = new Date().getTime();
+
+        await bind(modules.types).to(modules.className).inSingletonScope();
+
+        var end = new Date().getTime();
+
+        logger.log("CRZ Loader", `${modules.className.name} dependencies initialized \x1b[33m[${end - start}ms]\x1b[0m`)
 
     })
 
 });
 
-function bootstrap(): IBootstrapReturn {
+async function bootstrap(): Promise<IBootstrapReturn> {
+
+    logger.log("CRZ Framework", "Starting bootstrap application")
 
     const appContainer = new Container();
 
@@ -90,7 +100,7 @@ function bootstrap(): IBootstrapReturn {
                         binds[methodName](...args);
 
                     });
-                    
+
                 }
 
             }
@@ -98,9 +108,18 @@ function bootstrap(): IBootstrapReturn {
 
     });
 
-    app.init();
+    await app.init();
 
     return { appContainer, app };
 }
 
-export const { app, appContainer } = bootstrap();
+
+onNet("onResourceStart", (resourceName: string) => {
+    if (GetCurrentResourceName() !== resourceName)
+        throw new Error("This resource is not allowed to start");
+
+    setTimeout(async () => {
+        const { appContainer, app } = await bootstrap();
+        appContainer && app && logger.log("CRZ Framework", `⚡️ Bootstrap application successfully started`);
+    }, 500)
+})
