@@ -20,23 +20,27 @@ export interface IBootstrapReturn {
     app: App;
 }
 
-const modulesBind = [
+const modules = [
     // Logger
-    { types: Types.ILogger, controller: LoggerService },
+    { types: Types.ILogger, className: LoggerService },
     // Prisma
-    { types: Types.PrismaService, controller: PrismaService },
-    // connectionModule
-    { types: Types.ConnectionController, controller: ConnectionController },
-    { types: Types.ConnectionService, controller: ConnectionService },
-    { types: Types.ConnectionRepository, controller: ConnectionRepository },
+    { types: Types.PrismaService, className: PrismaService },
+    // ConnectionModule
+    { types: Types.ConnectionController, className: ConnectionController },
+    { types: Types.ConnectionService, className: ConnectionService },
+    { types: Types.ConnectionRepository, className: ConnectionRepository },
     // App
-    { types: Types.Application, controller: App },
+    { types: Types.Application, className: App },
 ]
 
 export const appBindings = new ContainerModule((bind: interfaces.Bind) => {
-    modulesBind.forEach((modules) => {
-        bind(modules.types).to(modules.controller).inSingletonScope();
+
+    modules.forEach((modules) => {
+
+        bind(modules.types).to(modules.className).inSingletonScope();
+
     })
+
 });
 
 function bootstrap(): IBootstrapReturn {
@@ -47,22 +51,31 @@ function bootstrap(): IBootstrapReturn {
 
     const app = appContainer.get<App>(Types.Application);
 
-    modulesBind.forEach((modules) => {
+    modules.forEach((modules) => {
+
         const controller = appContainer.get<any>(modules.types);
+
         for (const methodName of getMethodNames(controller)) {
+
             const netEventsMetadata = getMethodMetadata<string[]>(
                 "__net_event__",
                 controller,
                 methodName
             );
+
             if (netEventsMetadata) {
+
                 for (const eventName of netEventsMetadata) {
                     onNet(eventName, (...args: any[]) => {
+
                         controller[methodName](...args);
+
                     });
                 }
+
             }
         }
+
     });
 
     app.init();
