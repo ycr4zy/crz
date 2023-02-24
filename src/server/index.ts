@@ -113,10 +113,9 @@ async function bootstrap(): Promise<IBootstrapReturn> {
     return { appContainer, app };
 }
 
-
 onNet("onResourceStart", (resourceName: string) => {
     if (GetCurrentResourceName() !== resourceName)
-        throw new Error("This resource is not allowed to start");
+        return;
 
     setTimeout(async () => {
         const { appContainer, app } = await bootstrap();
