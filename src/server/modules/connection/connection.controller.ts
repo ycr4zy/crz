@@ -6,7 +6,7 @@ import Types from '../../types';
 import { IConnectionController } from './connection.controller.interface';
 import { IConnectionService } from './connection.service.interface';
 
-import { onGameEvent, onNetEvent } from '@shared/decorator'
+import { onGameEvent } from '@shared/decorator'
 
 @injectable()
 export class ConnectionController implements IConnectionController {
@@ -17,6 +17,7 @@ export class ConnectionController implements IConnectionController {
         @inject(Types.ConnectionService) public connectionService: IConnectionService,
     ) {
         this.logger.log(this.constructor.name, "Initiated")
+
     }
 
     @onGameEvent("playerConnecting")
@@ -24,10 +25,6 @@ export class ConnectionController implements IConnectionController {
 
         deferrals.done("You are not allowed to join this server.")
 
-        console.log(this.test)
-
         this.logger.log(this.constructor.name, `Player ${name} is connecting`);
-
-        //await this.connectionService.onPlayerConnecting(name, setKickReason, deferrals);
     }
 }

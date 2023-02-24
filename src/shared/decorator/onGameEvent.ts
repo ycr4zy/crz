@@ -1,10 +1,12 @@
-export function onGameEvent<T>(this: any, gameEventName: string) {
-    return function (target: Object, callableMethod: string | symbol, descriptor: TypedPropertyDescriptor<any>) {
-        //reflect metadata
-        
-        onNet(gameEventName, function (...args: any[]) {
-            target[callableMethod].bind(this)(...args)
-        });
+import { extendArrayMetadata } from "helpers/metadata.util";
 
-    }
+export function onGameEvent<T>(gameEventName: string): MethodDecorator {
+    return (
+        target: any,
+        key?: string | symbol,
+        descriptor?: TypedPropertyDescriptor<any>
+    ) => {
+        extendArrayMetadata("__net_event__", [gameEventName], descriptor.value);
+        return descriptor;
+    };
 }
