@@ -10,8 +10,6 @@ import { onEvent } from '@shared/decorator'
 
 @injectable()
 export class ConnectionController implements IConnectionController {
-    public test: number = 123131;
-
     constructor(
         @inject(Types.ILogger) public logger: ILogger,
         @inject(Types.ConnectionService) public connectionService: IConnectionService,
