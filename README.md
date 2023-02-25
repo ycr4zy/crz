@@ -21,3 +21,12 @@ yarn
 yarn build # Build the source-code
 yarn build watch # Build the source-code and watch
 ```
+
+## Environment Variables
+```bash
+  DATABASE_URL = # is your database string connection
+  
+  DISCORD_SERVERID = # is server id for a channel on discord [How get It] -> Right Click and Copy ID
+  
+  DISCORD_TOKEN = # is your application token for your bot, don't forget apply intents
+```
