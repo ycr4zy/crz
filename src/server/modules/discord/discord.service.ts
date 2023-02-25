@@ -1,8 +1,9 @@
-import { Client, Message } from "discord.js";
+import { Client, Message, TextChannel } from "discord.js";
 import { inject, injectable } from "inversify";
 import Types from "../../types";
 import { ILogger } from "@shared/helpers/logger/logger.interface";
 import { BotRepository } from "./discord.repository";
+import { ChannelList, EmbedMessage } from "./discord.service.interface";
 
 @injectable()
 export class Bot {
@@ -28,7 +29,7 @@ export class Bot {
     }
 
     async getUserPoints(userId) {
-        
+
         let userPoints = 0
 
         const user = await this.client.users.fetch(userId);
@@ -47,6 +48,21 @@ export class Bot {
         })
 
         return userPoints > 0 ? userPoints : 0;
+    }
+
+    public async messageToChannel(channelId: ChannelList, message: EmbedMessage): Promise<void> {
+
+        const channel = this.client.channels.cache.find(ch => ch.id == channelId);
+
+        if (channel)
+            (<TextChannel>channel).send({
+                embeds: [{
+                    title: message.title,
+                    description: message.description,
+                    image: message.image,
+                    color: message.color
+                }]
+            })
     }
 
     public onReady(): void {

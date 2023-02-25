@@ -6,6 +6,7 @@ export default {
 	ConnectionService: Symbol.for('ConnectionService'),
 	ConnectionRepository: Symbol.for('ConnectionRepository'),
 	BotRepository: Symbol("BotRepository"),
+	QueueService: Symbol("QueueService"),
 	Bot: Symbol("Bot"),
 	Client: Symbol("Client"),
 	DiscordToken: Symbol("DiscordToken"),

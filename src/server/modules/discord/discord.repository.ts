@@ -10,7 +10,12 @@ export class BotRepository {
         [1078848605890281482]: {
             name: "Membro",
             points: 1
-        }
+        },
+
+        [1079160895600590990]: {
+            name: "Prioridade 1",
+            points: 10
+        },
 
     }
 

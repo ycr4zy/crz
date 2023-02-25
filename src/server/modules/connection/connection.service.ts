@@ -8,6 +8,8 @@ import { GetPlayerIdentifiers } from "@shared/helpers"
 import { Users } from '@prisma/client';
 import Types from '../../types';
 import { Bot } from 'modules/discord/discord.service';
+import { IQueueService } from 'modules/queue/queue.service.interface';
+import { ChannelList } from 'modules/discord/discord.service.interface';
 
 @injectable()
 export class ConnectionService implements IConnectionService {
@@ -15,7 +17,9 @@ export class ConnectionService implements IConnectionService {
         @inject(Types.ILogger) public logger: ILogger,
         @inject(Types.Bot) private discordService: Bot,
         @inject(Types.ConnectionRepository) private usersRepository: IConnectionRepository,
-    ) { }
+        @inject(Types.QueueService) private queueService: IQueueService,
+    ) {
+    }
 
     async create({ steamId, licenseId, discordId, discordPoints }: ConnectionCreateDTO): Promise<Users | null> {
 
@@ -70,9 +74,15 @@ export class ConnectionService implements IConnectionService {
         if (userRoles === 0)
             return deferrals.done("You are not allowed to join this server.")
 
+
         this.logger.log(this.constructor.name, `Player [${name}] - [${steam}] is connecting with ${userRoles} points`)
 
-        deferrals.done("You are not allowed to join this server.")
+        const queuePosition = this.queueService.enqueue({ steamId: steam, discordId: discord, deferrals: deferrals, priorityName: name, priorityPoints: userRoles, queueTime: new Date() })
 
+        this.discordService.messageToChannel(ChannelList.queueLog, {
+            title: "Player connecting to the server with queue",
+            description: `Player [${name}] - [${steam}]\n Connecting with **${userRoles} points**\n Queue position **${queuePosition}º**`,
+            color: 0x00ff00
+        })
     }
 }

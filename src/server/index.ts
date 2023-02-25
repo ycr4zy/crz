@@ -21,6 +21,8 @@ import { Bot } from 'modules/discord/discord.service';
 // dotenv
 import dotenv from 'dotenv';
 import { BotRepository } from 'modules/discord/discord.repository';
+import { QueueService } from 'modules/queue/queue.service';
+import { Wait } from '@shared/helpers';
 dotenv.config();
 
 export interface IBootstrapReturn {
@@ -42,6 +44,8 @@ const modules = [
     // Discord
     { types: Types.Bot, className: Bot },
     { types: Types.BotRepository, className: BotRepository },
+    // Queue
+    { types: Types.QueueService, className: QueueService },
     // App
     { types: Types.Application, className: App },
 ]
@@ -126,6 +130,36 @@ async function bootstrap(): Promise<IBootstrapReturn> {
                         binds[methodName](...args);
 
                     });
+
+                }
+
+            }
+
+            const ticksMetadata = getMethodMetadata<number[]>(
+                "ticks",
+                binds,
+                methodName
+            );
+
+            if (ticksMetadata) {
+
+                for (const waitTime of ticksMetadata) {
+
+                    try {
+
+                        setTick(async () => {
+
+                            await Wait(waitTime)
+
+                            binds[methodName]();
+
+                        });
+
+                    } catch (err) {
+
+                        logger.error("CRZ Ticks", `${methodName} - ${waitTime} ticks error: ${err}`)
+
+                    }
 
                 }
 
