@@ -15,6 +15,13 @@ import { ConnectionRepository } from 'modules/connection/connection.repository';
 // Utils for a method creator
 import { getMethodMetadata, getMethodNames } from '@shared/helpers/metadata.util';
 
+import { Client, GatewayIntentBits } from "discord.js";
+import { Bot } from 'modules/discord/discord.service';
+
+// dotenv
+import dotenv from 'dotenv';
+dotenv.config();
+
 export interface IBootstrapReturn {
     appContainer: Container;
     app: App;
@@ -31,6 +38,8 @@ const modules = [
     { types: Types.ConnectionController, className: ConnectionController },
     { types: Types.ConnectionService, className: ConnectionService },
     { types: Types.ConnectionRepository, className: ConnectionRepository },
+    // Discord
+    { types: Types.Bot, className: Bot },
     // App
     { types: Types.Application, className: App },
 ]
@@ -48,6 +57,21 @@ export const appBindings = new ContainerModule((bind: interfaces.Bind) => {
         logger.log("CRZ Loader", `${modules.className.name} dependencies initialized \x1b[33m[${end - start}ms]\x1b[0m`)
 
     })
+
+    // Discord Binds
+
+    bind<Client>(Types.Client).toConstantValue(new Client({
+        intents: [
+            GatewayIntentBits.Guilds,
+            GatewayIntentBits.GuildMessages,
+            GatewayIntentBits.MessageContent,
+            GatewayIntentBits.GuildMembers
+        ]
+    }))
+
+    bind<string>(Types.DiscordToken).toConstantValue(process.env.DISCORD_TOKEN)
+
+    bind<string>(Types.DiscordServerId).toConstantValue(process.env.DISCORD_SERVERID)
 
 });
 
