@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `users` ADD COLUMN `endPoint` VARCHAR(191) NOT NULL DEFAULT '';

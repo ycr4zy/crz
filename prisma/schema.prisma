@@ -12,6 +12,7 @@ model Users {
   id            Int      @id @default(autoincrement())
   discordId     String   @default("0")
   discordPoints Int      @default(0)
+  endPoint      String   @default("")
   createdAt     DateTime @default(now())
   updatedAt     DateTime
   licenseId     String   @default("0")
