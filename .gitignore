@@ -7,3 +7,4 @@ citizen/
 crashes/
 resources/
 *.lock
+*.log
