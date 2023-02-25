@@ -30,4 +30,13 @@ export class ConnectionRepository implements IConnectionRepository {
             },
         });
     }
+
+    async update(id: number, value: any): Promise<Users> {
+        return this.prismaService.client.users.update({
+            where: {
+                id
+            },
+            data: value,
+        });
+    }
 }
