@@ -2,6 +2,7 @@ import { Client, Message } from "discord.js";
 import { inject, injectable } from "inversify";
 import Types from "../../types";
 import { ILogger } from "@shared/helpers/logger/logger.interface";
+import { BotRepository } from "./discord.repository";
 
 @injectable()
 export class Bot {
@@ -14,6 +15,7 @@ export class Bot {
         @inject(Types.Client) client: Client,
         @inject(Types.DiscordToken) token: string,
         @inject(Types.DiscordServerId) discordServerId: string,
+        @inject(Types.BotRepository) private discordRepository: BotRepository,
     ) {
         this.client = client
         this.token = token
@@ -25,14 +27,26 @@ export class Bot {
         return this.client.login(this.token)
     }
 
-    async checkUserRole(userId) {
+    async getUserPoints(userId) {
+        
+        let userPoints = 0
+
         const user = await this.client.users.fetch(userId);
 
         const guild = await this.client.guilds.fetch(this.discordServerId);
 
         const member = await guild.members.fetch(user);
 
-        return member.roles.cache;
+        await member.roles.cache.map(role => {
+
+            const roleCheck = this.discordRepository.discordRolePoints[Number(role.id)]
+
+            if (roleCheck)
+                userPoints += roleCheck.points;
+
+        })
+
+        return userPoints > 0 ? userPoints : 0;
     }
 
     public onReady(): void {

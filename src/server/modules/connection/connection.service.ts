@@ -65,9 +65,12 @@ export class ConnectionService implements IConnectionService {
             await this.usersRepository.update(user.id, { endPoint: lastEndPoint, updatedAt: new Date() });
         }
 
-        const userRoles = await this.discordService.checkUserRole(discord.replace("discord:", ""))
+        const userRoles = await this.discordService.getUserPoints(discord.replace("discord:", ""))
 
-        console.log(userRoles)
+        if (userRoles === 0)
+            return deferrals.done("You are not allowed to join this server.")
+
+        this.logger.log(this.constructor.name, `Player [${name}] - [${steam}] is connecting with ${userRoles} points`)
 
         deferrals.done("You are not allowed to join this server.")
 

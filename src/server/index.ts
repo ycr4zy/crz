@@ -20,6 +20,7 @@ import { Bot } from 'modules/discord/discord.service';
 
 // dotenv
 import dotenv from 'dotenv';
+import { BotRepository } from 'modules/discord/discord.repository';
 dotenv.config();
 
 export interface IBootstrapReturn {
@@ -40,26 +41,14 @@ const modules = [
     { types: Types.ConnectionRepository, className: ConnectionRepository },
     // Discord
     { types: Types.Bot, className: Bot },
+    { types: Types.BotRepository, className: BotRepository },
     // App
     { types: Types.Application, className: App },
 ]
 
 export const appBindings = new ContainerModule((bind: interfaces.Bind) => {
 
-    modules.forEach(async (modules) => {
-
-        var start = new Date().getTime();
-
-        await bind(modules.types).to(modules.className).inSingletonScope();
-
-        var end = new Date().getTime();
-
-        logger.log("CRZ Loader", `${modules.className.name} dependencies initialized \x1b[33m[${end - start}ms]\x1b[0m`)
-
-    })
-
     // Discord Binds
-
     bind<Client>(Types.Client).toConstantValue(new Client({
         intents: [
             GatewayIntentBits.Guilds,
@@ -72,6 +61,19 @@ export const appBindings = new ContainerModule((bind: interfaces.Bind) => {
     bind<string>(Types.DiscordToken).toConstantValue(process.env.DISCORD_TOKEN)
 
     bind<string>(Types.DiscordServerId).toConstantValue(process.env.DISCORD_SERVERID)
+
+    // Modules Binds
+    modules.forEach(async (modules) => {
+
+        var start = new Date().getTime();
+
+        await bind(modules.types).to(modules.className).inSingletonScope();
+
+        var end = new Date().getTime();
+
+        logger.log("CRZ Loader", `${modules.className.name} dependencies initialized \x1b[33m[${end - start}ms]\x1b[0m`)
+
+    })
 
 });
 
