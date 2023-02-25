@@ -1,6 +1,7 @@
 const path = require('path');
 const esbuild = require('esbuild');
 const { filelocPlugin } = require("esbuild-plugin-fileloc");
+const envFilePlugin = require('esbuild-envfile-plugin');
 
 const output = path.resolve(__dirname, '..', 'server', 'resources', 'crz');
 
@@ -33,5 +34,5 @@ esbuild.build({
     target: ['node16'],
     platform: 'node',
     watch: watchConfig('server'),
-    plugins: [filelocPlugin()]
+    plugins: [envFilePlugin,filelocPlugin()]
 }).then(() => console.log('✔ [server]: Builded!')).catch((err) => console.log(err));
