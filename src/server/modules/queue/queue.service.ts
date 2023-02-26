@@ -38,7 +38,7 @@ export class QueueService implements IQueueService {
 
             if (!playerEntering) {
 
-                const queueTime = (time - user.queueTime.getTime()) / 1000;
+                const queueTime = Math.floor((time - user.queueTime.getTime()) / 1000);
 
                 user.deferrals.update(`You are in the queue. You have been waiting for ${queueTime} seconds.`);
 
@@ -53,8 +53,8 @@ export class QueueService implements IQueueService {
                     user.deferrals.done();
 
                     this.dequeue();
+                    
                 }
-
             }
         });
     }
