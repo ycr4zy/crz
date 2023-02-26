@@ -18,9 +18,10 @@ esbuild.build({
     entryPoints: [`./src/client/index.ts`],
     outdir: output + "/client/",
     bundle: true,
-    minify: true,
-    format: 'esm',
-    target: ['ES2021'],
+    minify: false,
+    platform: 'browser',
+    target: ['chrome93'],
+    format: 'iife',
     watch: watchConfig('client')
 }).then(() => console.log('✔ [client]: Builded!')).catch((err) => console.log(err));
 
@@ -31,7 +32,7 @@ esbuild.build({
     minify: false,
     format: 'cjs',
     keepNames: false,
-    target: ['node16'],
+    target: ['ES2022'],
     platform: 'node',
     watch: watchConfig('server'),
     plugins: [envFilePlugin,filelocPlugin()]
