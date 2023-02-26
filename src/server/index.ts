@@ -32,7 +32,7 @@ export interface IBootstrapReturn {
 
 const logger = new LoggerService();
 
-const modules = [
+export const modules = [
     // Logger
     { types: Types.ILogger, className: LoggerService },
     // Prisma
@@ -81,7 +81,7 @@ export const appBindings = new ContainerModule((bind: interfaces.Bind) => {
 
 });
 
-async function bootstrap(): Promise<IBootstrapReturn> {
+function bootstrap(): IBootstrapReturn {
 
     logger.log("CRZ Framework", "Starting bootstrap application")
 
@@ -168,17 +168,9 @@ async function bootstrap(): Promise<IBootstrapReturn> {
 
     });
 
-    await app.init();
+    app.init();
 
     return { appContainer, app };
 }
 
-onNet("onResourceStart", (resourceName: string) => {
-    if (GetCurrentResourceName() !== resourceName)
-        return;
-
-    setTimeout(async () => {
-        const { appContainer, app } = await bootstrap();
-        appContainer && app && logger.log("CRZ Framework", `⚡️ Bootstrap application successfully started`);
-    }, 500)
-})
+export const { appContainer, app } = bootstrap()

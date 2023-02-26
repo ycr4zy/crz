@@ -2,8 +2,10 @@ import { inject, injectable } from "inversify";
 import { ILogger } from "@shared/helpers/logger/logger.interface";
 import Types from "../../types";
 import { IQueueList, IQueueService } from "./queue.service.interface";
-import { onTick } from "@shared/decorator";
+import { onTick, onDiscordCommand } from "@shared/decorator";
 import { GetPlayerIdentifiers, Wait } from "@shared/helpers";
+import { Message, TextChannel } from "discord.js";
+import { Bot } from "modules/discord/discord.service";
 
 @injectable()
 export class QueueService implements IQueueService {
@@ -16,6 +18,7 @@ export class QueueService implements IQueueService {
 
     constructor(
         @inject(Types.ILogger) private logger: ILogger,
+        @inject(Types.Bot) private discordService: Bot,
     ) {
 
         this.queueList = [];
@@ -50,8 +53,6 @@ export class QueueService implements IQueueService {
                     user.deferrals.done();
 
                     this.dequeue();
-
-                    this.playerEnteringList.splice(this.playerEnteringList.indexOf(user.steamId), 1);
                 }
 
             }
@@ -59,7 +60,9 @@ export class QueueService implements IQueueService {
     }
 
     public getPlayerCount() {
+        
         return GetNumPlayerIndices()
+        
     }
 
     public enqueue(user: IQueueList): number {
@@ -117,6 +120,54 @@ export class QueueService implements IQueueService {
     public getQueueListByDiscordId(discordId: string): IQueueList {
 
         return this.queueList.find(x => x.discordId === discordId);
+
+    }
+
+    public getPointsByDiscordId(discordId: string): number {
+
+        return this.queueList.find(x => x.discordId === discordId).priorityPoints;
+
+    }
+
+    @onDiscordCommand("points")
+    public async commandGetPoints(message: Message) {
+
+        const points = await this.discordService.getUserPoints(message.author.id)
+
+        return message.reply(`You have ${points} points.`);
+
+    }
+
+    @onDiscordCommand("fila")
+    public async commandQueueList(message: Message) {
+
+        const channel: TextChannel = message.channel as TextChannel;
+
+        const queueList = await this.getQueueList()
+
+        return channel.send({
+            embeds: [{
+                title: "Fila",
+                description: "Lista de jogadores na fila",
+                fields: [
+                    {
+                        name: "Posição",
+                        value: queueList.map((x, i) => i + 1).join("\n"),
+                        inline: true
+                    },
+                    {
+                        name: "Nome",
+                        value: queueList.map(x => x.priorityName).join("\n"),
+                        inline: true
+                    },
+                    {
+                        name: "Pontos",
+                        value: queueList.map(x => x.priorityPoints).join("\n"),
+                        inline: true
+                    }
+                ]
+            }]
+        });
 
     }
 }

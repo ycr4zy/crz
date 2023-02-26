@@ -74,7 +74,6 @@ export class ConnectionService implements IConnectionService {
         if (userRoles === 0)
             return deferrals.done("You are not allowed to join this server.")
 
-
         this.logger.log(this.constructor.name, `Player [${name}] - [${steam}] is connecting with ${userRoles} points`)
 
         const queuePosition = this.queueService.enqueue({ steamId: steam, discordId: discord, deferrals: deferrals, priorityName: name, priorityPoints: userRoles, queueTime: new Date() })
@@ -82,6 +81,27 @@ export class ConnectionService implements IConnectionService {
         this.discordService.messageToChannel(ChannelList.queueLog, {
             title: "Player connecting to the server with queue",
             description: `Player [${name}] - [${steam}]\n Connecting with **${userRoles} points**\n Queue position **${queuePosition}º**`,
+            color: 0x00ff00
+        })
+    }
+
+    async onPlayerReady(source: string): Promise<any> {
+        const identifiers: any = GetPlayerIdentifiers(source);
+
+        const steam: string = identifiers.steam;
+
+        const user = await this.usersRepository.find(steam);
+
+        if (!user)
+            return;
+
+        this.logger.log(this.constructor.name, `Player [${user.id}] - [${steam}] is ready`);
+
+        this.queueService.playerEnteringList.splice(this.queueService.playerEnteringList.indexOf(user.steamId), 1);
+
+        this.discordService.messageToChannel(ChannelList.queueLog, {
+            title: "Player ready to play",
+            description: `Player [${user.id}] - [${steam}]\n Ready to play`,
             color: 0x00ff00
         })
     }

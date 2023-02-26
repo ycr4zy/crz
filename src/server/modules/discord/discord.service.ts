@@ -4,6 +4,8 @@ import Types from "../../types";
 import { ILogger } from "@shared/helpers/logger/logger.interface";
 import { BotRepository } from "./discord.repository";
 import { ChannelList, EmbedMessage } from "./discord.service.interface";
+import { getMethodMetadata, getMethodNames } from "@shared/helpers";
+import { appContainer, modules } from "index";
 
 @injectable()
 export class Bot {
@@ -22,6 +24,7 @@ export class Bot {
         this.token = token
         this.discordServerId = discordServerId
         this.client.on('ready', () => this.onReady())
+        this.client.on('messageCreate', (message) => this.onMessage(message))
     }
 
     public listen(): Promise<string> {
@@ -49,6 +52,58 @@ export class Bot {
 
         return userPoints > 0 ? userPoints : 0;
     }
+
+    public async onMessage(message: Message): Promise<void> {
+
+        modules.forEach((modules) => {
+
+            const binds = appContainer.get<any>(modules.types);
+
+            for (const methodName of getMethodNames(binds)) {
+
+                const discordCommands = getMethodMetadata<string[]>(
+                    "__discord_command__",
+                    binds,
+                    methodName
+                );
+
+                if (discordCommands) {
+
+                    for (const eventName of discordCommands) {
+
+                        try {
+
+                            if (message.author.bot)
+                                return;
+
+                            if (message.content.startsWith('!')) {
+
+                                const args = message.content.slice(1).trim().split(/ +/g);
+
+                                const command = args.shift().toLowerCase();
+
+                                if (command === eventName) {
+
+                                    binds[methodName](message);
+
+                                }
+                            }
+
+                        } catch (err) {
+
+                            this.logger.error("CRZ Ticks", `${methodName} - ${eventName} ticks error: ${err}`)
+
+                        }
+
+                    }
+
+                }
+            }
+
+        });
+
+    }
+
 
     public async messageToChannel(channelId: ChannelList, message: EmbedMessage): Promise<void> {
 

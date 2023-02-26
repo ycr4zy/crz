@@ -2,8 +2,12 @@ import { injectable } from 'inversify';
 
 @injectable()
 export class BotRepository {
-    
+
     public discordAllowedRole: number = 1078848605890281482;
+
+    public discordChannels: { [key: string]: number } = {
+        ["queue-commands"]: 1079183060618199172
+    }
 
     public discordRolePoints: { [key: number]: { name: string, points: number } } = {
 

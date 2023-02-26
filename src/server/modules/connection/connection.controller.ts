@@ -20,4 +20,9 @@ export class ConnectionController implements IConnectionController {
     async onPlayerConnecting(name: string, setKickReason: Function, deferrals: any) {
         return await this.connectionService.onPlayerConnecting(name, setKickReason, deferrals);
     }
+
+    @onEvent("playerReady")
+    async onPlayerReady() {
+        return await this.connectionService.onPlayerReady(String(global.source));
+    }
 }
