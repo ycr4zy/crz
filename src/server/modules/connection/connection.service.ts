@@ -96,7 +96,6 @@ export class ConnectionService implements IConnectionService {
         if (!userServer)
             this.usersRepository.connectionUsers.push(steam);
 
-
         const user = await this.usersRepository.find(steam);
 
         if (!user)

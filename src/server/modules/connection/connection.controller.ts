@@ -21,13 +21,13 @@ export class ConnectionController implements IConnectionController {
         return await this.connectionService.onPlayerConnecting(name, setKickReason, deferrals);
     }
 
-    @onEvent("Connection::PlayerReady")
-    async onPlayerReady() {
-        return await this.connectionService.onPlayerReady(String(global.source));
-    }
-
     @onEvent("playerDropped")
     async onPlayerDropped(reason: string) {
         return await this.connectionService.onPlayerDropped(String(global.source), reason);
+    }
+    
+    @onEvent("Connection::PlayerReady")
+    async onPlayerReady() {
+        return await this.connectionService.onPlayerReady(String(global.source));
     }
 }
