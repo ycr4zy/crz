@@ -1,5 +1,6 @@
 import { inject, injectable } from 'inversify';
 import Types from '../../types';
+import { emitNetPromise } from '@shared/helpers/';
 
 @injectable()
 export class ConnectionService {
@@ -9,10 +10,13 @@ export class ConnectionService {
 
     public async onClientMapStart(): Promise<void> {
 
-        emitNet('playerReady');
+        DoScreenFadeOut(1500);
 
-        DoScreenFadeOut(0);
+        const teste = await emitNetPromise({ eventName: 'Connection::PlayerReady', type: "server", args: [] })
+
+        console.log('testing return from netPromise with crypt -> ',teste)
+
+        DoScreenFadeIn(1500);
 
     }
-    
 }

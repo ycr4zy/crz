@@ -5,9 +5,13 @@ import { IConnectionRepository } from './connection.repository.interface';
 import { ConnectionEntity } from './connection.entity';
 
 import Types from '../../types';
+import { ConnectionService } from './connection.service';
 
 @injectable()
 export class ConnectionRepository implements IConnectionRepository {
+
+    public connectionUsers: string[] = []
+
     constructor(@inject(Types.PrismaService) private prismaService: PrismaService) { }
 
     async create({ steamId, licenseId, discordId, discordPoints }: ConnectionEntity): Promise<Users> {

@@ -4,7 +4,7 @@ import { ConnectionCreateDTO } from './dto/connection-create.dto';
 import { IConnectionService } from './connection.service.interface';
 import { ConnectionEntity } from './connection.entity';
 import { ILogger } from '@shared/helpers/logger/logger.interface';
-import { GetPlayerIdentifiers } from "@shared/helpers"
+import { GetPlayerIdentifiers, emitNetPromise } from "@shared/helpers"
 import { Users } from '@prisma/client';
 import Types from '../../types';
 import { Bot } from 'modules/discord/discord.service';
@@ -86,9 +86,16 @@ export class ConnectionService implements IConnectionService {
     }
 
     async onPlayerReady(source: string): Promise<any> {
+
         const identifiers: any = GetPlayerIdentifiers(source);
 
         const steam: string = identifiers.steam;
+
+        const userServer = await this.usersRepository.connectionUsers.find(item => item === steam);
+
+        if (!userServer)
+            this.usersRepository.connectionUsers.push(steam);
+
 
         const user = await this.usersRepository.find(steam);
 
@@ -104,5 +111,27 @@ export class ConnectionService implements IConnectionService {
             description: `Player [${user.id}] - [${steam}]\n Ready to play`,
             color: 0x00ff00
         })
+
+        return true;
+    }
+
+    async onPlayerDropped(source: string, reason: string): Promise<any> {
+
+        const identifiers: any = GetPlayerIdentifiers(source);
+
+        const steam: string = identifiers.steam;
+
+        const userServer = await this.usersRepository.connectionUsers.find(item => item === steam);
+
+        if (userServer)
+            this.usersRepository.connectionUsers.splice(this.usersRepository.connectionUsers.indexOf(userServer), 1);
+
+        const user = await this.usersRepository.find(steam);
+
+        if (!user)
+            return;
+
+        this.logger.log(this.constructor.name, `Player [${user.id}] - [${steam}] get dropped with reason: ${reason}`);
+
     }
 }

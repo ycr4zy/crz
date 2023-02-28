@@ -14,6 +14,13 @@ export class ConnectionController {
 
     @onEvent("onClientMapStart")
     async onClientMapStart() {
-       return await this.connectionService.onClientMapStart();
+        return await this.connectionService.onClientMapStart();
+    }
+
+    @onEvent("onClientResourceStart")
+    public async onClientResourceStart(resourceName: string) {
+        if (GetCurrentResourceName() != resourceName) return;
+
+        return await this.connectionService.onClientMapStart();
     }
 }
