@@ -112,6 +112,28 @@ function bootstrap(): IBootstrapReturn {
                 }
 
             }
+
+            const nuiEventsMetadata = getMethodMetadata<string[]>(
+                "__cfx_nui__",
+                binds,
+                methodName
+            );
+
+            if (nuiEventsMetadata) {
+
+                for (const eventName of nuiEventsMetadata) {
+
+                    console.log("CRZ Framework", `Registering nui event ${eventName} for ${methodName} method`)
+
+                    RegisterNuiCallbackType(eventName)
+                    on(`__cfx_nui:${eventName}`, async (...args: any[]) => {
+
+                        binds[methodName](...args);
+
+                    });
+                }
+
+            }
         }
     })
 

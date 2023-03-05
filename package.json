@@ -1,7 +1,8 @@
 {
   "name": "crz",
   "scripts": {
-    "build": "node scripts/esbuild.config.js"
+    "build": "node scripts/esbuild.config.js",
+    "web:dev": "cd ./src/web && yarn dev"
   },
   "dependencies": {
     "@citizenfx/client": "^2.0.6269-1",
