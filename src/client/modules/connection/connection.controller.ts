@@ -25,8 +25,7 @@ export class ConnectionController {
     }
 
     @onNuiEvent("Connection.RouteChanged")
-    public async onNUIConnectionTeste(data: any, cb: () => void) {
-        console.log("correctly called here", data)
-        cb();
+    public async onNUIConnection(data: any) {
+       return true
     }
 }

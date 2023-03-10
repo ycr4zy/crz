@@ -12,14 +12,12 @@ export class ConnectionService {
 
         DoScreenFadeOut(1500);
 
-        const teste = await emitNetPromise({ eventName: 'Connection::PlayerReady', type: "server", args: [] })
-
-        console.log('testing return from netPromise with crypt -> ', teste)
+        const ready = await emitNetPromise({ eventName: 'Connection::PlayerReady', type: "server", args: [] })
 
         DoScreenFadeIn(1500);
 
         //Example call to a NUI
-        
+
         SendNUIMessage({
             action: "Change:Route",
             name: "Connection",

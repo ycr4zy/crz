@@ -126,10 +126,9 @@ function bootstrap(): IBootstrapReturn {
                     console.log("CRZ Framework", `Registering nui event ${eventName} for ${methodName} method`)
 
                     RegisterNuiCallbackType(eventName)
-                    on(`__cfx_nui:${eventName}`, async (...args: any[]) => {
-
-                        binds[methodName](...args);
-
+                    on(`__cfx_nui:${eventName}`, async (data, cb) => {
+                        const res = await binds[methodName](data)
+                        cb(res)
                     });
                 }
 

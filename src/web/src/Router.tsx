@@ -31,6 +31,7 @@ export function Router() {
         await fetchNui(`${event.data.name}.RouteChanged`, { name: "test" });
 
         break;
+        
       case "Close:Route":
 
         navigate("/");

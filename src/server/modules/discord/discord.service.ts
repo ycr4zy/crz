@@ -21,9 +21,13 @@ export class Bot {
         @inject(Types.BotRepository) private discordRepository: BotRepository,
     ) {
         this.client = client
+
         this.token = token
+
         this.discordServerId = discordServerId
+
         this.client.on('ready', () => this.onReady())
+
         this.client.on('messageCreate', (message) => this.onMessage(message))
     }
 

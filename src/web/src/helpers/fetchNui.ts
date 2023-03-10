@@ -10,7 +10,7 @@ export async function fetchNui<T = any>(eventName: string, data?: any): Promise<
   const resourceName = (window as any).GetParentResourceName ? (window as any).GetParentResourceName() : 'crz';
 
   const res = await fetch(`https://${resourceName}/${eventName}`, options);
-  
+
   const resFormatted = await res.json();
 
   return resFormatted
